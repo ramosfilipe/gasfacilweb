@@ -45,6 +45,8 @@
     color: #fbfeee;
 }
 
+#sign-up:hover a{color:#2b542c;}
+
 @media (max-width: 767px) {
     .navbar-default .navbar-nav .open .dropdown-menu > li > a {
         color: #ecf0f1;

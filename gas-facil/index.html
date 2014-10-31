@@ -4,6 +4,10 @@
 <head>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.19.min.js"></script>
+    <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+    <script src="http://ajax.cdnjs.com/ajax/libs/underscore.js/1.1.4/underscore-min.js"></script>
+    <script src="http://ajax.cdnjs.com/ajax/libs/backbone.js/0.3.3/backbone-min.js"></script>
+
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -30,11 +34,14 @@
 </head>
 
 <body>
-<div class="main">
+
+
+<div id="gas-facil" class="main">
+
 
     <script type="text/javascript">
+        Parse.initialize("rMJLW7qybdglATi4FowrRFwmVqZkLoxuo6vntg1c","cvrkyMx0c4X2oG8vI9OkvtjnAClum3K9HMTkCj4i");
         var getPhotos = function() {
-            Parse.initialize("rMJLW7qybdglATi4FowrRFwmVqZkLoxuo6vntg1c","cvrkyMx0c4X2oG8vI9OkvtjnAClum3K9HMTkCj4i");
             var productsImages = Parse.Object.extend("Produto");
             var query = new Parse.Query(productsImages);
             query.find({
@@ -54,8 +61,8 @@
             });
         };
         $(document).ready(function() {
-            $("#products-list").hide();
-//            getPhotos();
+//            $("#products-list").hide();
+            getPhotos();
 
         });
         $(document).ready(function(){
@@ -71,14 +78,20 @@
                 });
             });
         })
+        function loadPage(href)
+        {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.open("GET", href, false);
+            xmlhttp.send();
+            return xmlhttp.responseText;
+        }
     </script>
 
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
-                <button id="dropdown-menu" type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -86,23 +99,26 @@
                 </button>
                 <a class="navbar-brand" href="#">Gás Fácil</a>
             </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                <li>
-                <a id="products-opt"href="#">Produtos</a>
-                </li>
-                <li>
-                <a id="history-opt" href="#">Histórico</a>
-                </li>
-                <li>
-                <a id="profile-opt" href="#">Perfil</a>
-                </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
+            <div id="navbar" class="navbar-collapse collapse">
+                <form id="login-form"class="navbar-form navbar-right" role="form">
+                    <div id="login-error-label" style="display:none"></div>
+                    <div class="form-group">
+                        <input id="login-username" type="text" placeholder="Usuário" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <input id="login-password" type="password" placeholder="Senha" class="form-control">
+                    </div>
+                    <button id="login-button" type="submit" class="btn btn-success">Logar</button>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li id="sign-up"><a style="color: #4cae4c;" onmouseover="this.style.color='#006600'"
+                                            onmouseout="this.style.color='#4cae4c'" href="#">Cadastrar</a></li>
+                    </ul>
+                </form>
+            </div><!--/.navbar-collapse -->
+
         </div>
-        <!-- /.container -->
+    </nav>
+
     <script type="text/javascript">
         $("#products-opt").click(function(){
             getPhotos();
@@ -125,6 +141,40 @@
                 getPhotos();
             }
         });
+        $("#login-button").click(function(){
+            //code responsible to sing up a user (can be added a "sign up" option after
+//            var user = new Parse.User();
+//            user.set("username", "my name");
+//            user.set("password", "my pass");
+//            user.set("email", "email@example.com");
+//
+//// other fields can be set just like with Parse.Object
+//            user.set("phone", "415-392-0202");
+//
+//            user.signUp(null, {
+//                success: function(user) {
+//                    // Hooray! Let them use the app now.
+//                },
+//                error: function(user, error) {
+//                    // Show the error message somewhere and let the user try again.
+//                    alert("Error: " + error.code + " " + error.message);
+//                }
+//            });
+            var username = $("#login-username").val();
+            var password = $("#login-password").val();
+            Parse.User.logIn(username, password, {
+                success: function(user) {
+
+                    window.location = "vendor-page.html";
+                },
+                error: function(user, error) {
+
+                    $("#login-error-label").hide();
+                    $("#login-error-label").html("Usúario e/ou senha inválido. Por favor, tentar novamente.").show();
+                }
+            });
+            event.preventDefault();
+        });
     </script>
     </nav>
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -136,57 +186,57 @@
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
     <!-- Page Content -->
+    <!-- Space where the client can request an item, in the future -->
+    <!--<div id="products-list" class="container">-->
+    <!--<a href="https://play.google.com/store/apps/details?id=com.boleiros.bazart">-->
+    <!--<img class="img-responsive"  alt="Get it on Google Play"-->
+    <!--src="" />-->
+    <!--</a>-->
+    <!--<div class="row">-->
 
-    <div id="products-list" class="container">
+    <!--<div class="col-lg-12">-->
+    <!--<h1 class="page-header">Pedidos</h1>-->
+    <!--</div>-->
+    <!--<div class="col-lg-3 col-md-4 col-xs-6 thumb">-->
+    <!--<a class="thumbnail" href="#">-->
+    <!--<img class="img-responsive"   id="Image01" src="http://placehold.it/400x300" alt="">-->
+    <!--</a>-->
+    <!--</div>-->
+    <!--<div class="col-lg-3 col-md-4 col-xs-6 thumb">-->
+    <!--<a class="thumbnail" href="#">-->
+    <!--<img class="img-responsive" id="Image02" src="http://placehold.it/400x300" alt="">-->
+    <!--</a>-->
+    <!--</div>-->
+    <!--<div class="col-lg-3 col-md-4 col-xs-6 thumb">-->
+    <!--<a class="thumbnail" href="#">-->
+    <!--<img class="img-responsive" id="Image03" src="http://placehold.it/400x300" alt="">-->
+    <!--</a>-->
+    <!--</div>-->
+    <!--</div>-->
+
+    <hr>
+
+    <!-- Footer -->
+    <footer>
         <a href="https://play.google.com/store/apps/details?id=com.boleiros.bazart">
-            <img class="img-responsive"  alt="Get it on Google Play"
-                 src="" />
+            <img alt="Get it on Google Play"
+                 src="images/brand/pt-br_generic_rgb_wo_60.png" />
         </a>
         <div class="row">
-
             <div class="col-lg-12">
-                <h1 class="page-header">Produtos</h1>
-            </div>
-            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                <a class="thumbnail" href="#">
-                    <img class="img-responsive"   id="Image01" src="http://placehold.it/400x300" alt="">
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                <a class="thumbnail" href="#">
-                    <img class="img-responsive" id="Image02" src="http://placehold.it/400x300" alt="">
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-xs-6 thumb">
-                <a class="thumbnail" href="#">
-                    <img class="img-responsive" id="Image03" src="http://placehold.it/400x300" alt="">
-                </a>
+                <p>Copyright &copy; Gás Fácil desde  2014</p>
             </div>
         </div>
+    </footer>
 
-        <hr>
+</div>
+<!-- /.container -->
 
-        <!-- Footer -->
-        <footer>
-            <a href="https://play.google.com/store/apps/details?id=com.boleiros.bazart">
-                <img alt="Get it on Google Play"
-                     src="images/brand/pt-br_generic_rgb_wo_60.png" />
-            </a>
-            <div class="row">
-                <div class="col-lg-12">
-                    <p>Copyright &copy; Gás Fácil desde  2014</p>
-                </div>
-            </div>
-        </footer>
+<!-- jQuery Version 1.11.0 -->
+<script src="js/jquery-1.11.0.js"></script>
 
-    </div>
-    <!-- /.container -->
-
-    <!-- jQuery Version 1.11.0 -->
-    <script src="js/jquery-1.11.0.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<!-- Bootstrap Core JavaScript -->
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 
 
 </div>
