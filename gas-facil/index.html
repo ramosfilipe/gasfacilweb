@@ -170,6 +170,7 @@
                 error: function(user, error) {
 
                     $("#login-error-label").hide();
+                    $("#login-error-label").css('color','red');
                     $("#login-error-label").html("Usúario e/ou senha inválido. Por favor, tentar novamente.").show();
                 }
             });
