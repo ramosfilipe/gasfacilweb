@@ -164,14 +164,18 @@
             var password = $("#login-password").val();
             Parse.User.logIn(username, password, {
                 success: function(user) {
-
-                    window.location = "vendor-page.html";
+                	if (user.get('fornecedor') == true) {
+	                    window.location = "vendor-page.html";
+                    } else {
+                    	$("#login-error-label").hide();
+                        $("#login-error-label").css('color','red');
+                        $("#login-error-label").html("Você não é um fornecedor cadastrado.").show();
+                    }
                 },
                 error: function(user, error) {
-
                     $("#login-error-label").hide();
                     $("#login-error-label").css('color','red');
-                    $("#login-error-label").html("Usúario e/ou senha inválido. Por favor, tentar novamente.").show();
+                    $("#login-error-label").html("Usuário e/ou senha inválido. Por favor, tentar novamente.").show();
                 }
             });
             event.preventDefault();
@@ -192,9 +196,7 @@
 
 		<!-- Footer -->
 		<div class="footer">
-			<footer>
-				<small>Copyright © 2014 Gás Fácil</small>
-			</footer>
+			<small>Copyright © 2014 Gás Fácil</small>
 		</div>
 
 	</div>

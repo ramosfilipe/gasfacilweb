@@ -45,6 +45,7 @@ h1,h2, h3, h4, h5, h6 {
 	width:100%;
 	text-align:center;
 	color:#3f3f3f;
+	padding-bottom: 40px;
 }
 
 #wrapper{
@@ -197,7 +198,7 @@ h11 {
 	text-align:center;
 	margin-top:0;
 	margin-bottom:0;
-	padding: 110px 0 90px;
+	padding: 120px 0 95px;
 	background: #c2d5eb;
 }
 
@@ -227,6 +228,17 @@ h11 {
 
 .login-logo {
 	text-align: center;
+}
+
+/* ===================================
+7. Produtos
+==================================== */
+
+.container-produtos { 
+	text-align:center;
+	margin-top:0;
+	margin-bottom:0;
+	padding: 50px 0 50px;
 }
 
 /* ===================================
