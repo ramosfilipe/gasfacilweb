@@ -60,12 +60,6 @@
 				var pedidos = Parse.Object.extend("Pedido");
 				var queryPedidos = new Parse.Query(pedidos);
 				
-				var produtos = Parse.Object.extend("Produto");
-				var queryProdutos = new Parse.Query(produtos);
-				
-				var compradores = Parse.Object.extend("User");
-				var queryCompr = new Parse.Query(compradores);
-				
 				queryPedidos.find({
 					success : function(results) {
 						pedidosIds = [];
@@ -76,36 +70,62 @@
 						
 						for (var i = 0; i < results.length; i++) {
 							var object = results[i];
+							
 							pedidosIds.push(object.get('objecId'));
+							
+							var comprador = object.get('comprador');
+							pedidosCompradores.push(comprador.get('nome'));
+							pedidosEndereco.push(comprador.get('endereco'));
+							
+							var produto = object.get('produto');
+							pedidosProdutos.push(produto.get('type'));
+
 							pedidosQuantidades.push(object.get('quantidade'));
-						} 
-						
+						}
+
 					},
 					error : function(error) {
 						alert("Error: " + error.code + " " + error.message);
 					}
 				});
 			};
-			
-			
+
 			$(document).ready(function() {
 				$("#pedidos-list").hide();
 				getPhotos();
 				getPedidos();
 			});
-			$(document).ready(function() {
-				$('img').on('click', function() {
-					var src = $(this).attr('src');
-					var img = '<img src="' + src + '" class="img-responsive"/>';
-					$('#myModal').modal();
-					$('#myModal').on('shown.bs.modal',function() {
-						$('#myModal .modal-body').html(img);
-					});
-					$('#myModal').on('hidden.bs.modal',function() {
-						$('#myModal .modal-body').html('');
-					});
-				});
-			})
+			$(document)
+					.ready(
+							function() {
+								$('img')
+										.on(
+												'click',
+												function() {
+													var src = $(this).attr(
+															'src');
+													var img = '<img src="' + src + '" class="img-responsive"/>';
+													$('#myModal').modal();
+													$('#myModal')
+															.on(
+																	'shown.bs.modal',
+																	function() {
+																		$(
+																				'#myModal .modal-body')
+																				.html(
+																						img);
+																	});
+													$('#myModal')
+															.on(
+																	'hidden.bs.modal',
+																	function() {
+																		$(
+																				'#myModal .modal-body')
+																				.html(
+																						'');
+																	});
+												});
+							})
 		</script>
 
 		<!-- Navigation -->
