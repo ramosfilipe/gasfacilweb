@@ -62,26 +62,39 @@
 				
 				queryPedidos.find({
 					success : function(results) {
-						pedidosIds = [];
-						pedidosCompradores = [];
-						pedidosEndereco = [];
-						pedidosQuantidades = [];
-						pedidosProdutos = [];
+						pedidos = [];
 						
 						for (var i = 0; i < results.length; i++) {
 							var object = results[i];
+							pedido = [];
 							
-							pedidosIds.push(object.get('objecId'));
+							pedido.push(object.get('objecId'));
 							
 							var comprador = object.get('comprador');
-							pedidosCompradores.push(comprador.get('nome'));
-							pedidosEndereco.push(comprador.get('endereco'));
+							pedido.push(comprador.get('nome'));
+							pedido.push(comprador.get('endereco'));
 							
 							var produto = object.get('produto');
-							pedidosProdutos.push(produto.get('type'));
+							pedido.push(produto.get('type'));
 
-							pedidosQuantidades.push(object.get('quantidade'));
+							pedido.push(object.get('quantidade'));
+							
+							pedidos.push(pedido);
 						}
+						
+						var table = document.getElementById("table-pedidos");  // set this to your table
+
+						var tbody = document.createElement("tbody");
+						table.appendChild(tbody);
+						pedidos.forEach(function(items) {
+							var row = document.createElement("tr");
+						  	items.forEach(function(item) {
+						    	var cell = document.createElement("td");
+						    	cell.textContent = item;
+						    	row.appendChild(cell);
+						  	});
+							tbody.appendChild(row);
+						});
 
 					},
 					error : function(error) {
@@ -219,31 +232,18 @@
 				</div>
 				
 				<div class="container-table">
-				<table cellpadding="0" cellspacing="0" class="table table-striped">
-				<thead>
-					<tr>
-						<th>Id</th>
-						<th>Nome do cliente</th>
-						<th>Endereço de entrega</th>
-						<th>Quantidade</th>
-						<th>Produto</th>
-					</tr>
-				</thead>
-				
-				<tbody>
-					<!-- FOR EACH nos pedidos -->
-					<tr>
-						<td>id</td>
-						<td>id</td>
-						<td>id</td>
-						<td>id</td>
-						<td>id</td>
-					</tr>
-				</tbody>
-			
-				</table>
-			</div>
-				
+					<table id="table-pedidos" class="table table-striped">
+						<thead>
+							<tr>
+								<th>Id</th>
+								<th>Nome do cliente</th>
+								<th>Endereço de entrega</th>
+								<th>Produto</th>
+								<th>Quantidade</th>
+							</tr>
+						</thead>
+					</table>
+				</div>
 			</div>
 			<!-- /.container -->
 			
