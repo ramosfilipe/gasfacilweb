@@ -69,14 +69,14 @@
 							var object = results[i];
 							order = [];
 							var buyer = object.get('comprador');
-                            order.push(buyer.get('username'));
+                            order.push(buyer.get('nome'));
                             order.push(buyer.get('endereco'));
 							var product = object.get('produto');
                             order.push(product.get('type'));
                             order.push(object.get('quantidade'));
 							orders.push(order);
 						}
-						
+
 						var table = document.getElementById("orders-table");
 
 						var tbody = document.createElement("tbody");
