@@ -66,7 +66,7 @@
 				var compradores = Parse.Object.extend("User");
 				var queryCompr = new Parse.Query(compradores);
 				
-				query.find({
+				queryPedidos.find({
 					success : function(results) {
 						pedidosIds = [];
 						pedidosCompradores = [];
