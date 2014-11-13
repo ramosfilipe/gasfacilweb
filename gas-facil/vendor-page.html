@@ -57,14 +57,14 @@
 			
 			var getPedidos = function() {
 				Parse.initialize("rMJLW7qybdglATi4FowrRFwmVqZkLoxuo6vntg1c", "cvrkyMx0c4X2oG8vI9OkvtjnAClum3K9HMTkCj4i");
-				var productsPedidos = Parse.Object.extend("Pedido");
-				var query = new Parse.Query(productsPedidos);
+				var pedidos = Parse.Object.extend("Pedido");
+				var queryPedidos = new Parse.Query(pedidos);
 				
 				var produtos = Parse.Object.extend("Produto");
-				var query2 = new Parse.Query(produtos);
+				var queryProdutos = new Parse.Query(produtos);
 				
 				var compradores = Parse.Object.extend("User");
-				var query3 = new Parse.Query(compradores);
+				var queryCompr = new Parse.Query(compradores);
 				
 				query.find({
 					success : function(results) {
@@ -79,7 +79,7 @@
 							pedidosIds.push(object.get('objecId'));
 							pedidosQuantidades.push(object.get('quantidade'));
 						} 
-
+						
 					},
 					error : function(error) {
 						alert("Error: " + error.code + " " + error.message);
