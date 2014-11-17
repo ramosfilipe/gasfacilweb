@@ -26,15 +26,15 @@ var checkOrders =  function(){
                     alertify.set({ delay: 30000 });
                     if(newNotification == true) {
                         alertify.log(buyerName + " fez um pedido!", "Notification", 0);
+                        playSound("notification");
                     }
                     document.body.addEventListener('click', function (e) {
-                        //while(e.target.className.indexOf('alertify-log') == -1) {
-                        //    playSound("../audio/notification.mp3"); /*not working*/
-                        //}
                         if(e.target.className.indexOf('alertify-log') > -1) {
+                            stopSound();
                             latestOrder.destroy();
-                            window.location.reload();
+                            document.getElementById('orders-opt').click();
                         }
+
                     }, false);
 
                 },
@@ -49,7 +49,22 @@ var checkOrders =  function(){
     setTimeout(checkOrders, 5000);
 };
 
-function playSound(soundfile) {
-    document.getElementById("order-sound").innerHTML=
-        "<embed src='"+soundfile+"' hidden=true autostart=true loop=false>";
-}
+var playSound = function(soundfile) {
+    ion.sound({
+        sounds: [
+            {name: "door_bell"},
+            {name: "notification"}
+        ],
+        path: getRootWebSitePath() + "/audio/",
+        preload: true
+    });
+    console.log(getRootWebSitePath());
+    ion.sound.play(soundfile, {
+        loop: true
+    });
+
+};
+
+var stopSound = function(){
+  ion.sound.pause();
+};

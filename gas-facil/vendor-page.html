@@ -8,6 +8,9 @@
 			src="http://www.parsecdn.com/js/parse-1.2.19.min.js"></script>
 	<script src="js/alertify.js"></script>
 	<script type="text/javascript" src="js/orderNotification.js"></script>
+	<script type="text/javascript" src="js/ion.sound.min.js"></script>
+	<script type="text/javascript" src="js/jquery.ion.sound.min.js"></script>
+	<script type="text/javascript" src="js/filepath.js"></script>
 
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -106,11 +109,13 @@
 			});
 		};
 
+
 		$(document).ready(function() {
 			$("#orders-list").hide();
 			getPhotos();
 			getOrders();
 			checkOrders();
+
 		});
 		$(document).ready(function() {
 			$('img').on('click',function() {
@@ -145,7 +150,7 @@
 				 id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
 					<li><a id="products-opt" href="#">Produtos</a></li>
-					<li><a id="pedidos-opt" href="#">Pedidos</a></li>
+					<li><a id="orders-opt" href="#">Pedidos</a></li>
 					<li><a id="history-opt" href="#">Histórico</a></li>
 					<li><a id="profile-opt" href="#">Perfil</a></li>
 				</ul>
@@ -163,7 +168,7 @@
 				$("#products-list").show();
 				$("#orders-list").hide();
 			});
-			$("#pedidos-opt").click(function() {
+			$("#orders-opt").click(function() {
 				$("#orders-list").show();
 				$("#products-list").hide();
 			});
@@ -228,8 +233,6 @@
 			<small>Copyright © 2014 Gás Fácil</small>
 		</div>
 	</div>
-
-	<div id="order-sound"></div>
 
 	<div id="orders-list" class="container">
 		<div class="row">
