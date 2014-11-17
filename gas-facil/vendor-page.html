@@ -62,6 +62,7 @@
                 queryOrders.include("comprador");
                 queryOrders.include("produto");
                 var buyers = Parse.Object.extend("User");
+				queryOrders.addDescending("createdAt");
 				queryOrders.find({
 					success : function(results) {
 						orders = [];
