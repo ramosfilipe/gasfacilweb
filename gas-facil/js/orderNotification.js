@@ -11,7 +11,9 @@ var checkOrders =  function(){
         if(count>0) {
             queryNotifications.find({
                 success: function(results) {
-                    var latestOrder = results[0];
+                    var latestOrderPos = (results.length - 1);
+                    var latestOrder = results[latestOrderPos];
+                    console.log(latestOrder);
                     var order = latestOrder.get("pedido");
                     var buyerName = order.get("comprador").get("nome");
                     alertify.set({ delay: 30000 });
