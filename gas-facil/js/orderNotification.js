@@ -31,8 +31,9 @@ var checkOrders =  function(){
                         //while(e.target.className.indexOf('alertify-log') == -1) {
                         //    playSound("../audio/notification.mp3"); /*not working*/
                         //}
-                        if(e.target.className.indexOf('alertify-log') != -1) {
+                        if(e.target.className.indexOf('alertify-log') > -1) {
                             latestOrder.destroy();
+                            window.location.reload();
                         }
                     }, false);
 
