@@ -3,6 +3,8 @@ var config = {appKey:"rMJLW7qybdglATi4FowrRFwmVqZkLoxuo6vntg1c",
 
 var newNotification = true;
 var lastOrderId = "";
+var reloaded = false;
+
 
 var checkOrders =  function(){
     Parse.initialize(config.appKey, config.javascriptKey);
@@ -32,7 +34,7 @@ var checkOrders =  function(){
                         if(e.target.className.indexOf('alertify-log') > -1) {
                             stopSound();
                             latestOrder.destroy();
-                            document.getElementById('orders-opt').click();
+                            clickOnOrders();
                         }
 
                     }, false);
@@ -68,3 +70,8 @@ var playSound = function(soundfile) {
 var stopSound = function(){
   ion.sound.pause();
 };
+
+var clickOnOrders = function(){
+    document.getElementById('orders-opt').click();
+
+}

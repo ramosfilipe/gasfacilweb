@@ -63,7 +63,9 @@
 			});
 		};
 
-
+		var deleteOldOrders = function(){
+			$("#orders-table tr").remove();
+		}
 
 		var getOrders = function() {
 			Parse.initialize("rMJLW7qybdglATi4FowrRFwmVqZkLoxuo6vntg1c", "cvrkyMx0c4X2oG8vI9OkvtjnAClum3K9HMTkCj4i");
@@ -88,8 +90,9 @@
 						orders.push(order);
 					}
 
-					var table = document.getElementById("orders-table");
+					deleteOldOrders(); //clean the table before adding the elements again (to avoid duplication)
 
+					var table = document.getElementById("orders-table");
 					var tbody = document.createElement("tbody");
 					table.appendChild(tbody);
 					orders.forEach(function(items) {
