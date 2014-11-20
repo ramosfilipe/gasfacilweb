@@ -107,16 +107,15 @@
 					orders.forEach(function(items) {
 						var row = document.createElement("tr");
 						var bt_process_order = document.createElement('input'); 
-						
 						items.forEach(function(item) {
 							var cell = document.createElement("td");
-							cell.textContent = item;
 							
 							bt_process_order.setAttribute('type','button'); 
 							bt_process_order.setAttribute('class','btn btn-primary');
 							bt_process_order.setAttribute('value','Processar');
 							bt_process_order.onclick = function() {
 								queryOrders.equalTo("objectId", items[0]);
+				
 								queryOrders.first({
 									success: function(object) {
 								    	object.set("status", "enviado");
@@ -282,7 +281,7 @@
 				<table id="orders-table" class="table table-striped">
 					<thead>
 					<tr>
-						<th>Id</th>
+						<th style="display:none;">Id</th>
 						<th>Status</th>
 						<th>Nome do cliente</th>
 						<th>Endereço de entrega</th>
