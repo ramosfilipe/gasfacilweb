@@ -109,6 +109,7 @@
 						var bt_process_order = document.createElement('input'); 
 						items.forEach(function(item) {
 							var cell = document.createElement("td");
+							cell.textContent = item;
 							
 							bt_process_order.setAttribute('type','button'); 
 							bt_process_order.setAttribute('class','btn btn-primary');
@@ -281,7 +282,7 @@
 				<table id="orders-table" class="table table-striped">
 					<thead>
 					<tr>
-						<th style="display:none;">Id</th>
+						<th>Id</th>
 						<th>Status</th>
 						<th>Nome do cliente</th>
 						<th>Endereço de entrega</th>
