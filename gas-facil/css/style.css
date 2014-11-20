@@ -242,6 +242,14 @@ h11 {
 }
 
 /* ===================================
+7. Pedidos
+==================================== */
+.button-process {
+	color: #fff;
+  	background: #3f3f3f;
+}
+
+/* ===================================
 7. Register
 ==================================== */
 
@@ -515,7 +523,8 @@ li {
 	position:absolute; 
 	right:170px;
 	bottom:-90px;
-} */
+	background: #3f3f3f;
+}  */
 
 .btn-theme {
 	font-size: 20px;

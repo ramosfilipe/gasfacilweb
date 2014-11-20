@@ -64,7 +64,7 @@
 		};
 
 		var deleteOldOrders = function(){
-			$("#orders-table tr").remove();
+			$("#orders-table tbody").remove();
 		}
 
 		var getOrders = function() {
@@ -81,30 +81,64 @@
 					for (var i = 0; i < results.length; i++) {
 						var object = results[i];
 						order = [];
-						var buyer = object.get('comprador');
-						order.push(buyer.get('nome'));
-						order.push(buyer.get('endereco'));
-						var product = object.get('produto');
-						order.push(product.get('type'));
-						order.push(object.get('quantidade'));
-						orders.push(order);
+						
+						var status = object.get('status');
+						if(status == "pendente") {
+							order.push(object.id);
+							order.push(status);
+							var buyer = object.get('comprador');
+							order.push(buyer.get('nome'));
+							order.push(buyer.get('endereco'));
+							var product = object.get('produto');
+							order.push(product.get('type'));
+							order.push(object.get('quantidade'));
+							order.push(object.get('price'));
+							order.push(object.get('troco'))
+							orders.push(order);
+						}						
 					}
 
 					deleteOldOrders(); //clean the table before adding the elements again (to avoid duplication)
 
 					var table = document.getElementById("orders-table");
+					
 					var tbody = document.createElement("tbody");
 					table.appendChild(tbody);
 					orders.forEach(function(items) {
 						var row = document.createElement("tr");
+						var bt_process_order = document.createElement('input'); 
+						
 						items.forEach(function(item) {
 							var cell = document.createElement("td");
 							cell.textContent = item;
-							row.appendChild(cell);
+							
+							bt_process_order.setAttribute('type','button'); 
+							bt_process_order.setAttribute('class','btn btn-primary');
+							bt_process_order.setAttribute('value','Processar');
+							bt_process_order.onclick = function() {
+								queryOrders.equalTo("objectId", items[0]);
+								queryOrders.first({
+									success: function(object) {
+								    	object.set("status", "enviado");
+								   		object.save();
+								   		
+								   	 	var canDismiss = false;
+								   	 	var notification = alertify.success('Pedido processado com sucesso!');
+								   	 	notification.ondismiss = function(){ return canDismiss; };
+								   	 	setTimeout(function(){ canDismiss = true;}, 20000);
+					                    
+								   	 	clickOnOrders();
+								  	},
+								  	error: function(error) {
+								    	alert("Error: " + error.code + " " + error.message);
+								  	}
+								});
+						    }
+						    row.appendChild(cell);
 						});
+						row.appendChild(bt_process_order);
 						tbody.appendChild(row);
 					});
-
 				},
 				error : function(error) {
 					alert("Error: " + error.code + " " + error.message);
@@ -118,8 +152,8 @@
 			getPhotos();
 			getOrders();
 			checkOrders();
-
 		});
+		
 		$(document).ready(function() {
 			$('img').on('click',function() {
 				var src = $(this).attr('src');
@@ -248,10 +282,14 @@
 				<table id="orders-table" class="table table-striped">
 					<thead>
 					<tr>
+						<th>Id</th>
+						<th>Status</th>
 						<th>Nome do cliente</th>
 						<th>Endereço de entrega</th>
 						<th>Produto</th>
 						<th>Quantidade</th>
+						<th>Valor pago</th>
+						<th>Troco</th>
 					</tr>
 					</thead>
 				</table>
