@@ -83,7 +83,7 @@
 						order = [];
 						
 						var status = object.get('status');
-						if(status == "pendente") {
+						if(status == "Pendente") {
 							order.push(object.id);
 							order.push(status);
 							var buyer = object.get('comprador');
@@ -119,7 +119,7 @@
 				
 								queryOrders.first({
 									success: function(object) {
-								    	object.set("status", "enviado");
+								    	object.set("status", "Enviado");
 								   		object.save();
 								   		
 								   	 	var canDismiss = false;
