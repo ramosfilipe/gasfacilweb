@@ -42,6 +42,39 @@
 <body>
 <div class="main">
 	<script type="text/javascript">
+		function initializeOrders() {
+			Parse.initialize("rMJLW7qybdglATi4FowrRFwmVqZkLoxuo6vntg1c", "cvrkyMx0c4X2oG8vI9OkvtjnAClum3K9HMTkCj4i");
+			var orders = Parse.Object.extend("Pedido");
+			var queryOrders = new Parse.Query(orders);
+	
+			queryOrders.include("comprador");
+			queryOrders.include("produto");
+			var buyers = Parse.Object.extend("User");
+			queryOrders.addDescending("createdAt");
+			
+			return queryOrders; 
+		}
+		
+		function fillOrderArray(object, status) {
+			order = [];
+			
+			order.push(object.id);
+			order.push(status);
+					
+			var buyer = object.get('comprador');
+			order.push(buyer.get('nome'));
+			order.push(buyer.get('endereco'));
+					
+			var product = object.get('produto');
+			order.push(product.get('type'));
+			
+			order.push(object.get('quantidade'));
+			order.push(object.get('price'));
+			order.push(object.get('troco'));
+			
+			return order;
+		}
+	
 		var getPhotos = function() {
 			Parse.initialize("rMJLW7qybdglATi4FowrRFwmVqZkLoxuo6vntg1c", "cvrkyMx0c4X2oG8vI9OkvtjnAClum3K9HMTkCj4i");
 			var productsImages = Parse.Object.extend("Produto");
@@ -68,13 +101,8 @@
 		}
 
 		var getOrders = function() {
-			Parse.initialize("rMJLW7qybdglATi4FowrRFwmVqZkLoxuo6vntg1c", "cvrkyMx0c4X2oG8vI9OkvtjnAClum3K9HMTkCj4i");
-			var orders = Parse.Object.extend("Pedido");
-			var queryOrders = new Parse.Query(orders);
-			queryOrders.include("comprador");
-			queryOrders.include("produto");
-			var buyers = Parse.Object.extend("User");
-			queryOrders.addDescending("createdAt");
+			var queryOrders = initializeOrders();
+			
 			queryOrders.find({
 				success : function(results) {
 					orders = [];
@@ -84,16 +112,7 @@
 						
 						var status = object.get('status');
 						if(status == "Pendente") {
-							order.push(object.id);
-							order.push(status);
-							var buyer = object.get('comprador');
-							order.push(buyer.get('nome'));
-							order.push(buyer.get('endereco'));
-							var product = object.get('produto');
-							order.push(product.get('type'));
-							order.push(object.get('quantidade'));
-							order.push(object.get('price'));
-							order.push(object.get('troco'))
+							var order = fillOrderArray(object, status);
 							orders.push(order);
 						}						
 					}
@@ -104,9 +123,11 @@
 					
 					var tbody = document.createElement("tbody");
 					table.appendChild(tbody);
+							
 					orders.forEach(function(items) {
 						var row = document.createElement("tr");
 						var bt_process_order = document.createElement('input'); 
+								
 						items.forEach(function(item) {
 							var cell = document.createElement("td");
 							cell.textContent = item;
@@ -114,29 +135,75 @@
 							bt_process_order.setAttribute('type','button'); 
 							bt_process_order.setAttribute('class','btn btn-primary');
 							bt_process_order.setAttribute('value','Processar');
+									
 							bt_process_order.onclick = function() {
 								queryOrders.equalTo("objectId", items[0]);
-				
 								queryOrders.first({
 									success: function(object) {
-								    	object.set("status", "Enviado");
-								   		object.save();
+						    			object.set("status", "Enviado");
+						   				object.save();
 								   		
-								   	 	var canDismiss = false;
-								   	 	var notification = alertify.success('Pedido processado com sucesso!');
-								   	 	notification.ondismiss = function(){ return canDismiss; };
-								   	 	setTimeout(function(){ canDismiss = true;}, 20000);
+						   		 		var canDismiss = false;
+						   	 			var notification = alertify.success('Pedido processado com sucesso!');
+						   	 			notification.ondismiss = function(){ return canDismiss; };
+						   	 			setTimeout(function(){ canDismiss = true;}, 20000);
 					                    
-								   	 	clickOnOrders();
-								  	},
-								  	error: function(error) {
-								    	alert("Error: " + error.code + " " + error.message);
-								  	}
+						   	 			clickOnOrders();
+						  			},
+						  			error: function(error) {
+						    			alert("Error: " + error.code + " " + error.message);
+						  			}
 								});
-						    }
+				    		}
+						    
+							row.appendChild(cell);
+						});
+								
+						row.appendChild(bt_process_order);
+						tbody.appendChild(row);
+					});
+				},
+				error : function(error) {
+					alert("Error: " + error.code + " " + error.message);
+				}
+			});
+		};
+		
+		var getHistory = function() {
+			var queryOrders = initializeOrders();
+			
+			queryOrders.find({
+				success : function(results) {
+					orders = [];
+					for (var i = 0; i < results.length; i++) {
+						var object = results[i];
+						order = [];
+						
+						var status = object.get('status');
+						if(status != "Pendente" && status != "pendente" && status != "enviado") {
+							var order = fillOrderArray(object, status);
+							orders.push(order);
+						}						
+					}
+
+					deleteOldOrders(); //clean the table before adding the elements again (to avoid duplication)
+
+					var table = document.getElementById("history-table");
+					
+					var tbody = document.createElement("tbody");
+					table.appendChild(tbody);
+					orders.forEach(function(items) {
+						var row = document.createElement("tr");
+						var dd_process_order = document.getElementById("dropdown-order");
+
+						items.forEach(function(item) {
+							var cell = document.createElement("td");
+							cell.textContent = item;
+							
 						    row.appendChild(cell);
 						});
-						row.appendChild(bt_process_order);
+						
+						row.appendChild(dd_process_order);
 						tbody.appendChild(row);
 					});
 				},
@@ -149,9 +216,11 @@
 
 		$(document).ready(function() {
 			$("#orders-list").hide();
+			$("#history-list").hide();
 			getPhotos();
 			getOrders();
 			checkOrders();
+			getHistory();
 		});
 		
 		$(document).ready(function() {
@@ -204,19 +273,24 @@
 				getPhotos();
 				$("#products-list").show();
 				$("#orders-list").hide();
+				$("#history-list").hide();
 			});
 			$("#orders-opt").click(function() {
 				getOrders();
 				$("#orders-list").show();
 				$("#products-list").hide();
+				$("#history-list").hide();
 			});
 			$("#history-opt").click(function() {
+				getHistory();
+				$("#history-list").show();
 				$("#products-list").hide();
 				$("#orders-list").hide();
 			});
 			$("#profile-opt").click(function() {
 				$("#products-list").hide();
 				$("#orders-list").hide();
+				$("#history-list").show();
 			});
 			$('#dropdown-menu').change(function() {
 				var selected = $(this).find(':selected').val();
@@ -241,6 +315,17 @@
 	</div>
 	<!-- /.modal -->
 	<!-- Page Content -->
+	
+	<div id="dropdown-order" class="btn-group" style="margin-top:10px;">
+  		<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+    	Modificar status <span class="caret"></span></button>
+  		
+  		<ul class="dropdown-menu" role="menu">
+   	 		<li><a href="#">Cancelado - Cliente</a></li>
+    		<li><a href="#">Cancelado - Endereço errado</a></li>
+    		<li><a href="#">Cancelado - Outro</a></li>
+  		</ul>
+	</div>
 
 	<div id="products-list" class="container">
 		<div class="row">
@@ -279,7 +364,40 @@
 			</div>
 
 			<div class="container-table">
-				<table id="orders-table" class="table table-striped">
+				<table id="orders-table" class="table table-striped table-hover">
+					<thead>
+					<tr>
+						<th>Id</th>
+						<th>Status</th>
+						<th>Nome do cliente</th>
+						<th>Endereço de entrega</th>
+						<th>Produto</th>
+						<th>Quantidade</th>
+						<th>Valor pago</th>
+						<th>Troco</th>
+					</tr>
+					</thead>
+				</table>
+			</div>
+		</div>
+		<!-- /.container -->
+
+		<hr>
+
+		<!-- Footer -->
+		<div class="footer" style="text-align: center">
+			<small>Copyright © 2014 Gás Fácil</small>
+		</div>
+	</div>
+	
+	<div id="history-list" class="container">
+		<div class="row">
+			<div class="col-lg-12">
+				<h1 class="page-header">Histórico</h1>
+			</div>
+
+			<div class="container-table">
+				<table id="history-table" class="table table-striped table-hover">
 					<thead>
 					<tr>
 						<th>Id</th>
