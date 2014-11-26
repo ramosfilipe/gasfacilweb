@@ -117,7 +117,7 @@
 			dd_process_order.setAttribute('class','btn btn-primary');
 			dd_process_order.setAttribute('id', dropdownId);
 			var id = dd_process_order.id;
-			addOptionToDropdownHistory(id,dd_process_order, "Aterar status");
+			addOptionToDropdownHistory(id,dd_process_order, "Alterar status");
 			addOptionToDropdownHistory(id,dd_process_order, "Enviado");
 			addOptionToDropdownHistory(id,dd_process_order, "Pendente");
 			addOptionToDropdownHistory(id,dd_process_order, "Cliente ausente");
@@ -135,6 +135,10 @@
 				option.innerHTML = optionName;
 				option.text = optionName;
 				option.value = optionName;
+				if(optionName == "Alterar status"){
+					option.selected = "selected";
+					option.disabled = "disabled";
+				}
 
 				dropdown.appendChild(option);
 
