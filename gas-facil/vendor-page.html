@@ -46,35 +46,42 @@
 			Parse.initialize("rMJLW7qybdglATi4FowrRFwmVqZkLoxuo6vntg1c", "cvrkyMx0c4X2oG8vI9OkvtjnAClum3K9HMTkCj4i");
 			var orders = Parse.Object.extend("Pedido");
 			var queryOrders = new Parse.Query(orders);
-	
+
 			queryOrders.include("comprador");
 			queryOrders.include("produto");
 			var buyers = Parse.Object.extend("User");
 			queryOrders.addDescending("createdAt");
-			
-			return queryOrders; 
+
+			return queryOrders;
 		}
-		
+
+		var orderStatus = {sent:"Enviado",
+			pending:"Pendente"};
+
+		//		var dd_process_order = createDropdownMenuHistory("dropdown-history");
+
+		var historyCount = 0;
+
 		function fillOrderArray(object, status) {
 			order = [];
-			
+
 			order.push(object.id);
 			order.push(status);
-					
+
 			var buyer = object.get('comprador');
 			order.push(buyer.get('nome'));
 			order.push(buyer.get('endereco'));
-					
+
 			var product = object.get('produto');
 			order.push(product.get('type'));
-			
+
 			order.push(object.get('quantidade'));
 			order.push(object.get('price'));
 			order.push(object.get('troco'));
-			
+
 			return order;
 		}
-	
+
 		var getPhotos = function() {
 			Parse.initialize("rMJLW7qybdglATi4FowrRFwmVqZkLoxuo6vntg1c", "cvrkyMx0c4X2oG8vI9OkvtjnAClum3K9HMTkCj4i");
 			var productsImages = Parse.Object.extend("Produto");
@@ -100,65 +107,103 @@
 			$("#orders-table tbody").remove();
 		}
 
+		var deleteOldHistory = function(){
+			historyCount = 0;
+			$("#history-table tbody").remove();
+		}
+
+		var createDropdownMenuHistory = function(dropdownId){
+			var dd_process_order = document.createElement('select');
+			dd_process_order.setAttribute('class','btn btn-primary');
+			dd_process_order.setAttribute('id', dropdownId);
+			var id = dd_process_order.id;
+			addOptionToDropdownHistory(id,dd_process_order, "Aterar status");
+			addOptionToDropdownHistory(id,dd_process_order, "Enviado");
+			addOptionToDropdownHistory(id,dd_process_order, "Pendente");
+			addOptionToDropdownHistory(id,dd_process_order, "Cliente ausente");
+			addOptionToDropdownHistory(id,dd_process_order, "Cliente recusou ");
+			return dd_process_order;
+
+		}
+
+		var addOptionToDropdownHistory = function(dropdownId, dropdown, optionName){
+			var id = '#' + dropdownId;
+			if( $(id).has('option').length < 3 ) {
+				console.log("id inside IF: " + id);
+
+				var option = document.createElement("option");
+				option.innerHTML = optionName;
+				option.text = optionName;
+				option.value = optionName;
+
+				dropdown.appendChild(option);
+
+			}
+		}
+
+		var clickOnHistory = function(){
+			document.getElementById("history-opt").click();
+		}
+
 		var getOrders = function() {
 			var queryOrders = initializeOrders();
-			
+
 			queryOrders.find({
 				success : function(results) {
 					orders = [];
 					for (var i = 0; i < results.length; i++) {
 						var object = results[i];
 						order = [];
-						
+
 						var status = object.get('status');
-						if(status == "Pendente") {
+						if(status == orderStatus.pending) {
 							var order = fillOrderArray(object, status);
 							orders.push(order);
-						}						
+						}
 					}
 
 					deleteOldOrders(); //clean the table before adding the elements again (to avoid duplication)
 
 					var table = document.getElementById("orders-table");
-					
+
 					var tbody = document.createElement("tbody");
 					table.appendChild(tbody);
-							
+
 					orders.forEach(function(items) {
 						var row = document.createElement("tr");
-						var bt_process_order = document.createElement('input'); 
-								
+						var bt_process_order = document.createElement('input');
+
 						items.forEach(function(item) {
 							var cell = document.createElement("td");
 							cell.textContent = item;
-							
-							bt_process_order.setAttribute('type','button'); 
+
+							bt_process_order.setAttribute('type','button');
 							bt_process_order.setAttribute('class','btn btn-primary');
 							bt_process_order.setAttribute('value','Processar');
-									
+
 							bt_process_order.onclick = function() {
 								queryOrders.equalTo("objectId", items[0]);
 								queryOrders.first({
 									success: function(object) {
-						    			object.set("status", "Enviado");
-						   				object.save();
-								   		
-						   		 		var canDismiss = false;
-						   	 			var notification = alertify.success('Pedido processado com sucesso!');
-						   	 			notification.ondismiss = function(){ return canDismiss; };
-						   	 			setTimeout(function(){ canDismiss = true;}, 20000);
-					                    
-						   	 			clickOnOrders();
-						  			},
-						  			error: function(error) {
-						    			alert("Error: " + error.code + " " + error.message);
-						  			}
+										object.set("status", orderStatus.sent);
+										object.save();
+
+										var canDismiss = false;
+										var notification = alertify.success('Pedido processado com sucesso!');
+										notification.ondismiss = function(){ return canDismiss; };
+										setTimeout(function(){ canDismiss = true;}, 1000);
+
+										clickOnOrders();
+									},
+									error: function(error) {
+										alert("Error: " + error.code + " " + error.message);
+									}
 								});
-				    		}
-						    
+							}
+
 							row.appendChild(cell);
 						});
-								
+
 						row.appendChild(bt_process_order);
 						tbody.appendChild(row);
 					});
@@ -168,43 +213,74 @@
 				}
 			});
 		};
-		
+
 		var getHistory = function() {
 			var queryOrders = initializeOrders();
-			
+
+			deleteOldHistory(); //clean the table before adding the elements again (to avoid duplication)
+
 			queryOrders.find({
 				success : function(results) {
 					orders = [];
 					for (var i = 0; i < results.length; i++) {
 						var object = results[i];
 						order = [];
-						
+
 						var status = object.get('status');
-						if(status != "Pendente" && status != "pendente" && status != "enviado") {
+						var currentStatus = status;
+						if(status != orderStatus.pending && status != "pendente" ) {
 							var order = fillOrderArray(object, status);
 							orders.push(order);
-						}						
+						}
 					}
 
-					deleteOldOrders(); //clean the table before adding the elements again (to avoid duplication)
 
 					var table = document.getElementById("history-table");
-					
+
 					var tbody = document.createElement("tbody");
 					table.appendChild(tbody);
 					orders.forEach(function(items) {
 						var row = document.createElement("tr");
-						var dd_process_order = document.getElementById("dropdown-order");
+
+						historyCount++;
+						var dropdownId = "dropdown-history" + historyCount ;
+						var dd_process_order = createDropdownMenuHistory(dropdownId);
+						var searchId = '#' + dropdownId;
+						console.log("searchID: " + searchId);
+						dd_process_order.onchange= function() {
+							var selected = $(this).find(':selected').val();
+							console.log("selected opt: " + selected + " current status: " + status);
+							queryOrders.equalTo("objectId", items[0]);
+							queryOrders.first({
+								success: function(object) {
+									object.set("status", selected);
+									object.save();
+									currentStatus = selected;
+									var canDismiss = false;
+									var notification = alertify.success('Pedido alterado com sucesso!');
+									notification.ondismiss = function(){ return canDismiss; };
+									setTimeout(function(){ canDismiss = true;}, 1000);
+
+									clickOnHistory();
+								},
+								error: function(error) {
+									alert("Error: " + error.code + " " + error.message);
+								}
+							});
+
+						};
 
 						items.forEach(function(item) {
 							var cell = document.createElement("td");
 							cell.textContent = item;
-							
-						    row.appendChild(cell);
+
+							row.appendChild(cell);
 						});
-						
+
+
 						row.appendChild(dd_process_order);
 						tbody.appendChild(row);
+
 					});
 				},
 				error : function(error) {
@@ -220,9 +296,9 @@
 			getPhotos();
 			getOrders();
 			checkOrders();
-			getHistory();
+
 		});
-		
+
 		$(document).ready(function() {
 			$('img').on('click',function() {
 				var src = $(this).attr('src');
@@ -290,7 +366,6 @@
 			$("#profile-opt").click(function() {
 				$("#products-list").hide();
 				$("#orders-list").hide();
-				$("#history-list").show();
 			});
 			$('#dropdown-menu').change(function() {
 				var selected = $(this).find(':selected').val();
@@ -315,17 +390,7 @@
 	</div>
 	<!-- /.modal -->
 	<!-- Page Content -->
-	
-	<div id="dropdown-order" class="btn-group" style="margin-top:10px;">
-  		<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-    	Modificar status <span class="caret"></span></button>
-  		
-  		<ul class="dropdown-menu" role="menu">
-   	 		<li><a href="#">Cancelado - Cliente</a></li>
-    		<li><a href="#">Cancelado - Endereço errado</a></li>
-    		<li><a href="#">Cancelado - Outro</a></li>
-  		</ul>
-	</div>
+
 
 	<div id="products-list" class="container">
 		<div class="row">
@@ -389,7 +454,7 @@
 			<small>Copyright © 2014 Gás Fácil</small>
 		</div>
 	</div>
-	
+
 	<div id="history-list" class="container">
 		<div class="row">
 			<div class="col-lg-12">
@@ -401,7 +466,7 @@
 					<thead>
 					<tr>
 						<th>Id</th>
-						<th>Status</th>
+						<th>Status </th>
 						<th>Nome do cliente</th>
 						<th>Endereço de entrega</th>
 						<th>Produto</th>
