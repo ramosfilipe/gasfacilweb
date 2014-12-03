@@ -11,6 +11,9 @@
 	<script type="text/javascript" src="js/ion.sound.min.js"></script>
 	<script type="text/javascript" src="js/jquery.ion.sound.min.js"></script>
 	<script type="text/javascript" src="js/filepath.js"></script>
+	<script type="text/javascript" src="js/filepath.js"></script>
+	<script type="text/javascript" src="js/saveProduct.js"></script>
+
 
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -29,6 +32,7 @@
 	<link rel="stylesheet" href="css/alertify.core.css" />
 	<link rel="stylesheet" href="css/alertify.default.css" />
 	<link rel="stylesheet" href="css/alertify.bootstrap.css" />
+	<link rel="stylesheet" href="css/main.css" />
 
 	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -61,6 +65,10 @@
 		//		var dd_process_order = createDropdownMenuHistory("dropdown-history");
 
 		var historyCount = 0;
+
+		var productType = "";
+		var productPrice = "";
+		var productImage = "";
 
 		function fillOrderArray(object, status) {
 			order = [];
@@ -315,6 +323,7 @@
 					$('#myModal .modal-body').html('');
 				});
 			});
+
 		})
 	</script>
 
@@ -335,7 +344,13 @@
 			<div class="collapse navbar-collapse"
 				 id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
-					<li><a id="products-opt" href="#">Produtos</a></li>
+					<!--<li><a id="products-opt" href="#">Produtos</a></li>-->
+					<li class="dropdown">
+						<a href="#" id="products-opt" class="dropdown-toggle" data-toggle="dropdown" role="button"
+						   aria-expanded="false"> Produtos <span class="caret"></span></a>
+						<ul class="dropdown-menu" role="menu">
+							<li><a id="register-product-opt" href="#overlay-product-form">Cadastrar Produto</a></li>
+						</ul>
 					<li><a id="orders-opt" href="#">Pedidos</a></li>
 					<li><a id="history-opt" href="#">Histórico</a></li>
 					<li><a id="profile-opt" href="#">Perfil</a></li>
@@ -395,6 +410,8 @@
 	<!-- /.modal -->
 	<!-- Page Content -->
 
+	<!--Register a product form-->
+
 
 	<div id="products-list" class="container">
 		<div class="row">
@@ -423,6 +440,50 @@
 		<!-- Footer -->
 		<div class="footer" style="text-align: center">
 			<small>Copyright © 2014 Gás Fácil</small>
+		</div>
+	</div>
+
+
+	<div id="overlay-product-form"  class="modalDialog" >
+		<div class="col-md-4">
+			<div class="well">
+				<form id="register-product-form" >
+					<feildset>
+						<div class="form-group">
+							<a href="#close" title="Close" class="close">X</a>
+							<h3>Cadastrar Produto</h3>
+							<label class="control-label">Tipo:</label>
+							<select id="product-type-select" data-title="Por favor, selecione um tipo de produto."
+									name="type" class="form-control" data-require="">
+								<option selected="selected" disabled="disabled">Escolher tipo</option>
+								<option value="Água 500 ml">Água 500 ml</option>
+								<option value="Água 20 litros">Água 20 litros</option>
+								<option value="Gás">Gás</option>
+							</select>
+						</div>
+						<div class="form-group">
+							<label class="control-label">Preço:</label>
+							<input id="product-price-input" data-title="Por favor, insira apenas números" data-require=""
+								   data-regex="^[0-9]" name="price" class="form-control" placeholder="Preço do produto" />
+						</div>
+						<!--<div class="alert alert-danger"></div>-->
+						<label class="control-label">Escolher imagem:</label>
+						<form id="uploadimage" action="" method="post" enctype="multipart/form-data" >
+							<input name="image_file" id="product-image" type="file" />
+							<!--<input class = "btn btn-primary" type="submit"  id="upload-btn" value="Upload" />-->
+							<!--<img src="images/ajax-loader.gif" id="loading-img" style="display:none;" alt="Please Wait"/>-->
+						</form>
+						<div id="output"></div>
+						<div id="image_preview"> <img id="previewing" src="images/placeholder.png" /></div>
+						<div id="message" display="none"></div>
+						<div class="form-group text-center">
+							<button id="register-product-btn" class="btn btn-primary" type="submit" >Cadastrar</button>
+						</div>
+					</feildset>
+				</form>
+
+
+			</div>
 		</div>
 	</div>
 
@@ -496,8 +557,16 @@
 	<script src="js/jquery-1.11.1.min.js"></script>
 
 	<!-- Bootstrap Core JavaScript -->
-	<script src="js/bootstrap.min.js">
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/bootstrap.validator.js"></script>
+	<script>
+		$('form').bootstrap3Validate(function(e, data) {
+			e.preventDefault();
+
+			alert(JSON.stringify(data));
+		});
 	</script>
+
 </div>
 
 </body>
