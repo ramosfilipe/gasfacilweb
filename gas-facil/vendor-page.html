@@ -159,6 +159,7 @@
 									
 										parseFile = new Parse.File(productImage.name, productImage);
 										object.set('photo', parseFile);
+										object.set('thumbnailBlur',parseFile);
 									}
 									object.save();
 									
