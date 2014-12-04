@@ -107,6 +107,7 @@
 						products.push(product);
 					}
 					
+					deleteOldProducts();
 					products.forEach(function(items) {
 						var row_prod = document.getElementById("row-product");
 						
@@ -130,14 +131,14 @@
 						var price_input = document.createElement('input');
 						price_input.setAttribute("class", "form-control");
 						price_input.setAttribute("value", items[2]);
-						price_input.setAttribute("id", "price_inp");
+						price_input.setAttribute("id", items[3]);
 						
 						var title_photo = document.createElement('label');
 						title_photo.textContent = "Nova imagem:";
 						
 						var photo_input = document.createElement('input');
 						photo_input.setAttribute("type", "file");
-						photo_input.setAttribute("id", "image");
+						photo_input.setAttribute("id", "image-"+items[3]+"-thumb");
 					
 						var btn_edit = document.createElement('input');
 						btn_edit.setAttribute("type", "button");
@@ -148,15 +149,16 @@
 							query.equalTo("objectId", items[3]);
 							query.first({
 								success: function(object) {
-									object.set("price", document.getElementById("price_inp").value);
-									var fileUploadControl = $("#image")[0];
+									console.log(document.getElementById(items[3]).value);
+									object.set('price', document.getElementById(items[3]).value);
+									var fileUploadControl = $("#image-"+items[3]+"-thumb")[0];
 									console.log(fileUploadControl);
 									if (fileUploadControl.files.length > 0 && checkFileType(fileUploadControl.files[0].type, fileUploadControl.files[0])) {
 								        file = fileUploadControl.files[0];
 								        productImage = file;
 									
 										parseFile = new Parse.File(productImage.name, productImage);
-										object.set("photo", parseFile);
+										object.set('photo', parseFile);
 									}
 									object.save();
 									
@@ -204,6 +206,13 @@
 		var deleteOldHistory = function(){
 			historyCount = 0;
 			$("#history-table tbody").remove();
+		}
+		
+		var deleteOldProducts = function(){
+			var row_prod = document.getElementById("row-product");
+			while (row_prod.firstChild) {
+				row_prod.removeChild(row_prod.firstChild);
+			}
 		}
 
 		var createDropdownMenuHistory = function(dropdownId){
