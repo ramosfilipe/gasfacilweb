@@ -46,6 +46,16 @@
 <body>
 <div class="main">
 	<script type="text/javascript">
+		var orderStatus = {sent:"Enviado", pending:"Pendente"};
+
+		//		var dd_process_order = createDropdownMenuHistory("dropdown-history");
+
+		var historyCount = 0;
+
+		var productType = "";
+		var productPrice = "";
+		var productImage = "";
+	
 		function initializeOrders() {
 			Parse.initialize("rMJLW7qybdglATi4FowrRFwmVqZkLoxuo6vntg1c", "cvrkyMx0c4X2oG8vI9OkvtjnAClum3K9HMTkCj4i");
 			var orders = Parse.Object.extend("Pedido");
@@ -58,17 +68,6 @@
 
 			return queryOrders;
 		}
-
-		var orderStatus = {sent:"Enviado",
-			pending:"Pendente"};
-
-		//		var dd_process_order = createDropdownMenuHistory("dropdown-history");
-
-		var historyCount = 0;
-
-		var productType = "";
-		var productPrice = "";
-		var productImage = "";
 
 		function fillOrderArray(object, status) {
 			order = [];
@@ -96,13 +95,100 @@
 			var query = new Parse.Query(productsImages);
 			query.find({
 				success : function(results) {
-					imageURLs = [];
+					products = [];
 					for (var i = 0; i < results.length; i++) {
 						var object = results[i];
-						imageURLs.push(object.get('photo').url());
-						var index = i + 1;
-						$('#Image0' + index).attr('src', imageURLs[i]);
+						var product = [];
+						product.push(object.get('photo').url());
+						product.push(object.get('type'));
+						product.push(object.get('price'));
+						product.push(object.id);
+						
+						products.push(product);
 					}
+					
+					products.forEach(function(items) {
+						var row_prod = document.getElementById("row-product");
+						
+						var div_col = document.createElement('div');
+						div_col.setAttribute("class", "col-sm-6 col-md-4");
+						
+						var div_thumb = document.createElement('div');
+						div_thumb.setAttribute("class", "thumbnail");
+						
+						var prod_img = document.createElement('img');
+						prod_img.setAttribute("src", items[0]);
+						
+						var div_caption = document.createElement('div');
+						div_caption.setAttribute("class", "caption");
+						
+						var title = document.createElement('h3');
+						title.textContent = items[1];
+						var title_price = document.createElement('label');
+						title_price.textContent = "Preço:";
+						
+						var price_input = document.createElement('input');
+						price_input.setAttribute("class", "form-control");
+						price_input.setAttribute("value", items[2]);
+						price_input.setAttribute("id", "price_inp");
+						
+						var title_photo = document.createElement('label');
+						title_photo.textContent = "Nova imagem:";
+						
+						var photo_input = document.createElement('input');
+						photo_input.setAttribute("type", "file");
+						photo_input.setAttribute("id", "image");
+					
+						var btn_edit = document.createElement('input');
+						btn_edit.setAttribute("type", "button");
+						btn_edit.setAttribute("class", "btn btn-primary btn-block");
+						btn_edit.setAttribute("value", "Editar");
+						
+						btn_edit.onclick = function() {
+							query.equalTo("objectId", items[3]);
+							query.first({
+								success: function(object) {
+									object.set("price", document.getElementById("price_inp").value);
+									var fileUploadControl = $("#image")[0];
+									console.log(fileUploadControl);
+									if (fileUploadControl.files.length > 0 && checkFileType(fileUploadControl.files[0].type, fileUploadControl.files[0])) {
+								        file = fileUploadControl.files[0];
+								        productImage = file;
+									
+										parseFile = new Parse.File(productImage.name, productImage);
+										object.set("photo", parseFile);
+									}
+									object.save();
+									
+									var canDismiss = false;
+									var notification = alertify.success('Produto editado com sucesso.');
+									notification.ondismiss = function(){ return canDismiss; };
+									setTimeout(function(){ canDismiss = true;}, 1000);
+									
+									while (row_prod.firstChild) {
+										row_prod.removeChild(row_prod.firstChild);
+									}
+									setTimeout(function() {
+									    getPhotos();
+									}, 2000);
+								},
+								error: function(error) {
+									alert("Error: " + error.code + " " + error.message);
+								}
+							});
+						}
+						
+						div_caption.appendChild(title);
+						div_caption.appendChild(title_price);
+						div_caption.appendChild(price_input);
+						div_caption.appendChild(title_photo);
+						div_caption.appendChild(photo_input);
+						div_caption.appendChild(btn_edit);
+						div_thumb.appendChild(prod_img);
+						div_thumb.appendChild(div_caption);
+						div_col.appendChild(div_thumb);
+						row_prod.appendChild(div_col);
+					});
 
 				},
 				error : function(error) {
@@ -412,27 +498,23 @@
 
 	<!--Register a product form-->
 
-
 	<div id="products-list" class="container">
-		<div class="row">
+		<div id="row-product" class="row">
 			<div class="col-lg-12">
 				<h1 class="page-header">Produtos</h1>
 			</div>
-			<div class="col-sm-6 col-md-4">
-				<a class="thumbnail" href="#"> <img class="img-responsive"
-													id="Image01" src="http://placehold.it/300x300">
+			 <!-- <div class="col-sm-6 col-md-4">
+				<a class="thumbnail" href="#"> <img class="img-responsive" id="Image01" src="http://placehold.it/300x300">
 				</a>
 			</div>
 			<div class="col-sm-6 col-md-4">
-				<a class="thumbnail" href="#"> <img class="img-responsive"
-													id="Image02" src="http://placehold.it/300x300">
+				<a class="thumbnail" href="#"> <img class="img-responsive" id="Image02" src="http://placehold.it/300x300">
 				</a>
 			</div>
 			<div class="col-sm-6 col-md-4">
-				<a class="thumbnail" href="#"> <img class="img-responsive"
-													id="Image03" src="http://placehold.it/300x300">
+				<a class="thumbnail" href="#"> <img class="img-responsive" id="Image03" src="http://placehold.it/300x300">
 				</a>
-			</div>
+			</div> --> 
 		</div>
 
 		<hr>
