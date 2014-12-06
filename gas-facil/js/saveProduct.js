@@ -13,7 +13,7 @@ $(document).ready(function(e){
             console.log("price: " + productPrice);
             newProduct.set("price", productPrice);
             console.log("type: " + productType);
-            newProduct.set("thumbnailBlur", parseFile);
+            newProduct.set('thumbnailBlur', parseFile);
             newProduct.set("type", productType);
             newProduct.save(null, {
                 success: function (newProduct) {
