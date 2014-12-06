@@ -32,11 +32,11 @@
     /*width: 400px;*/
     position: relative;
     /*position: absolute;*/
-    height: 540px;
+    height: 610px;
     width: 380px;
     top:calc(40% - 50px/2);
     left:calc(35% - 50px/2);
-    margin: 10% auto;
+    margin: 4% auto;
     padding: 5px 20px 13px 20px;
     border-radius: 10px;
     background: #fff;

@@ -6,7 +6,7 @@ $(document).ready(function(e){
         var newProduct = new Product();
         productPrice = $("#product-price-input").val();
         var fileUploadControl = $("#product-image")[0];
-        if(validateForm(fileUploadControl)) {
+        if(validateForm(fileUploadControl) == true) {
             parseFile = new Parse.File(productImage.name, productImage);
             console.log("image: " + parseFile);
             newProduct.set("photo", parseFile);
@@ -27,7 +27,7 @@ $(document).ready(function(e){
                     $("#message").html("<span style='color:red' id='error_message' >Cadastro do produto falhou!</span>");
                 }
             });
-            $("#message").show();
+            $('#message').show();
 
         }
     });
@@ -50,13 +50,26 @@ $(document).ready(function(e){
         });
     });
 
-    var resetForm = function(){
-        $('#message').empty();
-        $("#product-price-input").empty();
-        $("#product-image").empty();
+    // close overlay when the ESC key is pressed
+    $(document).keyup(function(e) {
+        var ESC_KEY =27;
+        if (e.keyCode == ESC_KEY) { // if user presses esc key
+            $('#overlay-product-form').hide(); //hide the overlay
+        }
+    });
 
-    };
 });
+
+
+var resetForm = function(){
+    $('#product-type-select').val('Escolher tipo');
+    $("#product-price-input").val('');
+    $("#product-description-input").val('');
+    $('#previewing').attr('src', 'images/placeholder.png');
+    productImage = null;
+    productPrice = "";
+    productType = ""
+};
 
 function checkFileType(imagefile, file){
     var match= ["image/jpeg","image/png","image/jpg"];
@@ -115,5 +128,5 @@ function validateForm(fileUploadControl) {
 
 function isNumber(value) {
 
-    return /^\d+$/.test(value);
+    return /^[+-]?\d+(\.\d+)?$/.test(value);
 };

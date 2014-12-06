@@ -55,7 +55,7 @@
 		var productType = "";
 		var productPrice = "";
 		var productImage = "";
-	
+
 		function initializeOrders() {
 			Parse.initialize("rMJLW7qybdglATi4FowrRFwmVqZkLoxuo6vntg1c", "cvrkyMx0c4X2oG8vI9OkvtjnAClum3K9HMTkCj4i");
 			var orders = Parse.Object.extend("Pedido");
@@ -103,48 +103,48 @@
 						product.push(object.get('type'));
 						product.push(object.get('price'));
 						product.push(object.id);
-						
+
 						products.push(product);
 					}
-					
+
 					deleteOldProducts();
 					products.forEach(function(items) {
 						var row_prod = document.getElementById("row-product");
-						
+
 						var div_col = document.createElement('div');
 						div_col.setAttribute("class", "col-sm-6 col-md-4");
-						
+
 						var div_thumb = document.createElement('div');
 						div_thumb.setAttribute("class", "thumbnail");
-						
+
 						var prod_img = document.createElement('img');
 						prod_img.setAttribute("src", items[0]);
-						
+
 						var div_caption = document.createElement('div');
 						div_caption.setAttribute("class", "caption");
-						
+
 						var title = document.createElement('h3');
 						title.textContent = items[1];
 						var title_price = document.createElement('label');
 						title_price.textContent = "Preço:";
-						
+
 						var price_input = document.createElement('input');
 						price_input.setAttribute("class", "form-control");
 						price_input.setAttribute("value", items[2]);
 						price_input.setAttribute("id", items[3]);
-						
+
 						var title_photo = document.createElement('label');
 						title_photo.textContent = "Nova imagem:";
-						
+
 						var photo_input = document.createElement('input');
 						photo_input.setAttribute("type", "file");
 						photo_input.setAttribute("id", "image-"+items[3]+"-thumb");
-					
+
 						var btn_edit = document.createElement('input');
 						btn_edit.setAttribute("type", "button");
 						btn_edit.setAttribute("class", "btn btn-primary btn-block");
 						btn_edit.setAttribute("value", "Editar");
-						
+
 						btn_edit.onclick = function() {
 							query.equalTo("objectId", items[3]);
 							query.first({
@@ -154,25 +154,25 @@
 									var fileUploadControl = $("#image-"+items[3]+"-thumb")[0];
 									console.log(fileUploadControl);
 									if (fileUploadControl.files.length > 0 && checkFileType(fileUploadControl.files[0].type, fileUploadControl.files[0])) {
-								        file = fileUploadControl.files[0];
-								        productImage = file;
-									
+										file = fileUploadControl.files[0];
+										productImage = file;
+
 										parseFile = new Parse.File(productImage.name, productImage);
 										object.set('photo', parseFile);
 										object.set('thumbnailBlur',parseFile);
 									}
 									object.save();
-									
+
 									var canDismiss = false;
 									var notification = alertify.success('Produto editado com sucesso.');
 									notification.ondismiss = function(){ return canDismiss; };
 									setTimeout(function(){ canDismiss = true;}, 1000);
-									
+
 									while (row_prod.firstChild) {
 										row_prod.removeChild(row_prod.firstChild);
 									}
 									setTimeout(function() {
-									    getPhotos();
+										getPhotos();
 									}, 2000);
 								},
 								error: function(error) {
@@ -180,7 +180,7 @@
 								}
 							});
 						}
-						
+
 						div_caption.appendChild(title);
 						div_caption.appendChild(title_price);
 						div_caption.appendChild(price_input);
@@ -208,7 +208,7 @@
 			historyCount = 0;
 			$("#history-table tbody").remove();
 		}
-		
+
 		var deleteOldProducts = function(){
 			var row_prod = document.getElementById("row-product");
 			while (row_prod.firstChild) {
@@ -488,6 +488,14 @@
 					getPhotos();
 				}
 			});
+			$('#register-product-opt').click(function() {
+				$('#message').hide();
+				document.getElementById('product-image').value = "";
+				$("#product-image").css("color","black");
+				resetForm();
+				$('#overlay-product-form').show();
+
+			});
 			$("#logout").click(function() {
 				Parser.User.logout();
 			});
@@ -513,18 +521,18 @@
 			<div class="col-lg-12">
 				<h1 class="page-header">Produtos</h1>
 			</div>
-			 <!-- <div class="col-sm-6 col-md-4">
-				<a class="thumbnail" href="#"> <img class="img-responsive" id="Image01" src="http://placehold.it/300x300">
-				</a>
-			</div>
-			<div class="col-sm-6 col-md-4">
-				<a class="thumbnail" href="#"> <img class="img-responsive" id="Image02" src="http://placehold.it/300x300">
-				</a>
-			</div>
-			<div class="col-sm-6 col-md-4">
-				<a class="thumbnail" href="#"> <img class="img-responsive" id="Image03" src="http://placehold.it/300x300">
-				</a>
-			</div> --> 
+			<!-- <div class="col-sm-6 col-md-4">
+                <a class="thumbnail" href="#"> <img class="img-responsive" id="Image01" src="http://placehold.it/300x300">
+                </a>
+            </div>
+            <div class="col-sm-6 col-md-4">
+                <a class="thumbnail" href="#"> <img class="img-responsive" id="Image02" src="http://placehold.it/300x300">
+                </a>
+            </div>
+            <div class="col-sm-6 col-md-4">
+                <a class="thumbnail" href="#"> <img class="img-responsive" id="Image03" src="http://placehold.it/300x300">
+                </a>
+            </div> -->
 		</div>
 
 		<hr>
@@ -547,7 +555,7 @@
 							<label class="control-label">Tipo:</label>
 							<select id="product-type-select" data-title="Por favor, selecione um tipo de produto."
 									name="type" class="form-control" data-require="">
-								<option selected="selected" disabled="disabled">Escolher tipo</option>
+								<option value="Escolher tipo" selected="selected" disabled="disabled">Escolher tipo</option>
 								<option value="Água 500 ml">Água 500 ml</option>
 								<option value="Água 20 litros">Água 20 litros</option>
 								<option value="Gás">Gás</option>
@@ -556,7 +564,12 @@
 						<div class="form-group">
 							<label class="control-label">Preço:</label>
 							<input id="product-price-input" data-title="Por favor, insira apenas números" data-require=""
-								   data-regex="^[0-9]" name="price" class="form-control" placeholder="Preço do produto" />
+								   name="price" class="form-control" placeholder="Preço do produto" />
+						</div>
+						<div class="form-group">
+							<label class="control-label">Descrição:</label>
+							<input id="product-description-input" data-title="Por favor, insira apenas números" data-require=""
+								   name="description" class="form-control" placeholder="Descrição do produto" />
 						</div>
 						<!--<div class="alert alert-danger"></div>-->
 						<label class="control-label">Escolher imagem:</label>
