@@ -87,3 +87,21 @@
 #cropContainerHeaderButton:hover {
     background: #1CD139;
 }
+
+#date{
+    display:inline-block;
+    float:left;
+    padding-right:6px;
+
+}
+
+#filter-history-bnt{
+    float: right;
+    display: inline;
+    margin: auto;
+    height:28px;
+    margin-left: 15px;
+    text-align: center;
+
+
+}

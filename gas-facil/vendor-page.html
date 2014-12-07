@@ -13,6 +13,10 @@
 	<script type="text/javascript" src="js/filepath.js"></script>
 	<script type="text/javascript" src="js/filepath.js"></script>
 	<script type="text/javascript" src="js/saveProduct.js"></script>
+	<script type="text/javascript" src="js/filterHistory.js"></script>
+
+
+
 
 
 	<meta charset="utf-8">
@@ -74,6 +78,9 @@
 
 			order.push(object.id);
 			order.push(status);
+			var date = getOrderDate(object);
+			order.push(date);
+
 
 			var buyer = object.get('comprador');
 			order.push(buyer.get('nome'));
@@ -87,6 +94,16 @@
 			order.push(object.get('troco'));
 
 			return order;
+		}
+
+		function getOrderDate(object){
+			var orderDate = object.createdAt;
+			var orderDay = orderDate.getDate();
+			if(orderDay >= '1' && orderDay <= '9'){
+				orderDay = '0' + orderDay; // add zero to day if necessary
+			}
+			var orderDateFormat = orderDay+"/"+(orderDate.getMonth()+1)+"/"+orderDate.getFullYear();
+			return orderDateFormat;
 		}
 
 		var getPhotos = function() {
@@ -206,6 +223,7 @@
 
 		var deleteOldHistory = function(){
 			historyCount = 0;
+			$('#calendar').val('');
 			$("#history-table tbody").remove();
 		}
 
@@ -281,6 +299,7 @@
 						var row = document.createElement("tr");
 						var bt_process_order = document.createElement('input');
 
+						items.splice(0,1);//remove the id (not display it)
 						items.forEach(function(item) {
 							var cell = document.createElement("td");
 							cell.textContent = item;
@@ -353,11 +372,8 @@
 						historyCount++;
 						var dropdownId = "dropdown-history" + historyCount ;
 						var dd_process_order = createDropdownMenuHistory(dropdownId);
-						var searchId = '#' + dropdownId;
-						console.log("searchID: " + searchId);
 						dd_process_order.onchange= function() {
 							var selected = $(this).find(':selected').val();
-							console.log("selected opt: " + selected + " current status: " + status);
 							queryOrders.equalTo("objectId", items[0]);
 							queryOrders.first({
 								success: function(object) {
@@ -378,6 +394,7 @@
 
 						};
 
+						items.splice(0,1);
 						items.forEach(function(item) {
 							var cell = document.createElement("td");
 							cell.textContent = item;
@@ -602,8 +619,8 @@
 				<table id="orders-table" class="table table-striped table-hover">
 					<thead>
 					<tr>
-						<th>Id</th>
 						<th>Status</th>
+						<th>Data</th>
 						<th>Nome do cliente</th>
 						<th>Endereço de entrega</th>
 						<th>Produto</th>
@@ -633,10 +650,15 @@
 
 			<div class="container-table">
 				<table id="history-table" class="table table-striped table-hover">
+					<div id ="date">Data:
+						<input type="text"  id="calendar" size="10" maxlength="10"/>
+						<button id="filter-history-bnt" class="btn btn-primary" type="button">Pesquisar</button>
+
+					</div>
 					<thead>
 					<tr>
-						<th>Id</th>
 						<th>Status </th>
+						<th>Data</th>
 						<th>Nome do cliente</th>
 						<th>Endereço de entrega</th>
 						<th>Produto</th>
@@ -671,6 +693,10 @@
 			alert(JSON.stringify(data));
 		});
 	</script>
+
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.0/themes/base/jquery-ui.css" />
+	<script src="http://code.jquery.com/jquery-1.8.2.js"></script>
+	<script src="http://code.jquery.com/ui/1.9.0/jquery-ui.js"></script>
 
 </div>
 
