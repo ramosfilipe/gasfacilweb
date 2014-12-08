@@ -5,6 +5,7 @@ $(document).ready(function(e){
         var Product = Parse.Object.extend("Produto");
         var newProduct = new Product();
         productPrice = $("#product-price-input").val();
+        productDescription = $("#product-description-input").val();
         var fileUploadControl = $("#product-image")[0];
         if(validateForm(fileUploadControl) == true) {
             parseFile = new Parse.File(productImage.name, productImage);
@@ -12,6 +13,7 @@ $(document).ready(function(e){
             newProduct.set("photo", parseFile);
             console.log("price: " + productPrice);
             newProduct.set("price", productPrice);
+            newProduct.set("descricao", productDescription);
             console.log("type: " + productType);
             newProduct.set('thumbnailBlur', parseFile);
             newProduct.set("type", productType);
@@ -68,7 +70,8 @@ var resetForm = function(){
     $('#previewing').attr('src', 'images/placeholder.png');
     productImage = null;
     productPrice = "";
-    productType = ""
+    productType = "";
+    productDescription = "";
 };
 
 function checkFileType(imagefile, file){
@@ -117,6 +120,11 @@ function validateForm(fileUploadControl) {
     }
     if (productType == "") {
         $("#message").html("<span style='color:red' id='error_message' >Selecione um tipo de produto!</span>");
+        $("#message").show();
+        result = false;
+    }
+    if(productDescription == ""){
+        $("#message").html("<span style='color:red' id='error_message' >Informe a descrição do produto!</span>");
         $("#message").show();
         result = false;
     }
