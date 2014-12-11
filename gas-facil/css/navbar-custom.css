@@ -64,6 +64,16 @@
 	margin-bottom: 10px;
 }
 
+.thumbnail img { 
+	min-height: 250px; 
+	height: 250px; 
+}
+
+.error-form {
+	padding: 10px;
+	color: #FF0000;
+	text-align: center;
+}
 
 @media (max-width: 767px) {
     .navbar-default .navbar-nav .open .dropdown-menu > li > a {
