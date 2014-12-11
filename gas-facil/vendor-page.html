@@ -206,7 +206,7 @@
 										object.set('price', new_price);
 										object.set('descricao', new_desc);
 									
-										if(fileUploadControl.files.length > 0) {
+										if(fileUploadControl.files.length > 0 && checkFileType(fileUploadControl.files[0].type, fileUploadControl.files[0])) {
 											file = fileUploadControl.files[0];
 											productImage = file;
 		
