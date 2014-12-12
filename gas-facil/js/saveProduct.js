@@ -15,6 +15,7 @@ $(document).ready(function(e){
             console.log("type: " + productType);
             newProduct.set('thumbnailBlur', parseFile);
             newProduct.set("type", productType);
+            newProduct.set("emCirculacao", true);
             newProduct.save(null, {
                 success: function (newProduct) {
                     // Execute any logic that should take place after the object is saved.
