@@ -108,8 +108,12 @@ $(document).ready(function(e){
 
                     };
 
-                    items.splice(0,1); //remove the id (not display it)
-                    items.forEach(function(item) {
+                    var temp_items = [];
+                    for(var i=0; i < items.length; i++){
+                        temp_items.push(items[i]);
+                    }
+                    temp_items.splice(0,1);
+                    temp_items.forEach(function(item) {
                         var cell = document.createElement("td");
                         cell.textContent = item;
 
@@ -203,8 +207,12 @@ $(document).ready(function(e){
 
                     };
 
-                    items.splice(0,1); //remove the id (not display it)
-                    items.forEach(function(item) {
+                    var temp_items = [];
+                    for(var i=0; i < items.length; i++){
+                        temp_items.push(items[i]);
+                    }
+                    temp_items.splice(0,1); //remove the id (not display it)
+                    temp_items.forEach(function(item) {
                         var cell = document.createElement("td");
                         cell.textContent = item;
 
