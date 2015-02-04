@@ -56,7 +56,7 @@
 		var productDescription = "";
 
 		function initializeOrders() {
-			Parse.initialize("rMJLW7qybdglATi4FowrRFwmVqZkLoxuo6vntg1c", "cvrkyMx0c4X2oG8vI9OkvtjnAClum3K9HMTkCj4i");
+			Parse.initialize(config.appKey, config.javascriptKey);
 			var orders = Parse.Object.extend("Pedido");
 			var queryOrders = new Parse.Query(orders);
 
@@ -102,7 +102,7 @@
 		}
 
 		var getPhotos = function() {
-			Parse.initialize("rMJLW7qybdglATi4FowrRFwmVqZkLoxuo6vntg1c", "cvrkyMx0c4X2oG8vI9OkvtjnAClum3K9HMTkCj4i");
+			Parse.initialize(config.appKey, config.javascriptKey);
 			var productsImages = Parse.Object.extend("Produto");
 			var query = new Parse.Query(productsImages);
 			query.find({
@@ -498,11 +498,17 @@
 
 
 		$(document).ready(function() {
-			$("#orders-list").hide();
-			$("#history-list").hide();
-			getPhotos();
-			getOrders();
-			checkOrders();
+			Parse.initialize(config.appKey, config.javascriptKey);
+			var currentUser = Parse.User.current();
+			if (!currentUser) {
+				window.location = "index.html";
+			}else{
+				$("#orders-list").hide();
+				$("#history-list").hide();
+				getPhotos();
+				getOrders();
+				checkOrders();
+			}
 
 		});
 
@@ -596,7 +602,7 @@
 
 			});
 			$("#logout").click(function() {
-				Parser.User.logout();
+				Parse.User.logOut();
 			});
 		</script>
 	</nav>

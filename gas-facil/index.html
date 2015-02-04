@@ -159,7 +159,7 @@
                 getPhotos();
             }
         });
-        $("#login-button").click(function(){
+        $("#login-button").click(function(event){
             var username = $("#login-username").val();
             var password = $("#login-password").val();
             Parse.User.logIn(username, password, {
@@ -178,7 +178,7 @@
                     $("#login-error-label").html("Usuário e/ou senha inválido. Por favor, tentar novamente.").show();
                 }
             });
-            event.preventDefault();
+                event.preventDefault();
         });
     	</script>
 
